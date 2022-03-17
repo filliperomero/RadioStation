@@ -30,6 +30,6 @@ export default {
     displayName: "frontend",
     collectCoverageFrom: ["public/"],
     transformIgnorePatterns: [...defaultConfig.transformIgnorePatterns, "server"],
-    testMatch: ["**/tests/**/server/**/*.test.js"]
+    testMatch: ["**/tests/**/public/**/*.test.js"]
   }]
 }
