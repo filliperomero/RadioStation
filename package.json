@@ -7,9 +7,15 @@
     "start": "node --experimental-specifier-resolution=node server/index.js",
     "dev": "nodemon server/index.js",
     "test": "LOG_DISABLED=true NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --no-cache",
-    "test:watch": "LOG_DISABLED=true NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --no-cache --watchAll",
+    "test:watch": "LOG_DISABLED=true NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --no-cache --watchAll --detectOpenHandles",
     "test:coverage": "LOG_DISABLED=true NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --no-cache --coverage tests/unit",
-    "dev:docker": "docker-compose up dev"
+    "test:e2e": "LOG_DISABLED=true NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --no-cache tests/e2e",
+
+    "dev:docker": "docker-compose up dev",
+    "test:e2e:docker": "docker-compose up --build test-e2e",
+    "test:coverage:docker": "docker-compose up --build test-coverage",
+    "test:docker": "docker-compose up --build test",
+    "test:watch:docker": "docker-compose up --build test-watch"
   },
   "engines": {
     "node": "17"
@@ -18,7 +24,9 @@
   "license": "MIT",
   "devDependencies": {
     "jest": "27",
-    "nodemon": "2"
+    "nodemon": "2",
+    "portfinder": "1.0.28",
+    "supertest": "6.2.2"
   },
   "dependencies": {
     "pino": "7.8.0",

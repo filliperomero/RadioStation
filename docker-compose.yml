@@ -14,5 +14,53 @@ services:
     ports:
       - 5556:5556
 
+  test-e2e:
+    image: radio
+    build: .
+    environment:
+      PORT: 5556
+    command: 
+      - yarn
+      - test:e2e
+    volumes:
+      - .:/radio
+      - node_modules:/radio/node_modules
+
+  test:
+    image: radio
+    build: .
+    environment:
+      PORT: 5556
+    command: 
+      - yarn
+      - test
+    volumes:
+      - .:/radio
+      - node_modules:/radio/node_modules
+
+  test-watch:
+    image: radio
+    build: .
+    environment:
+      PORT: 5556
+    command: 
+      - yarn
+      - test:watch
+    volumes:
+      - .:/radio
+      - node_modules:/radio/node_modules
+
+  test-coverage:
+    image: radio
+    build: .
+    environment:
+      PORT: 5556
+    command: 
+      - yarn
+      - test:coverage
+    volumes:
+      - .:/radio
+      - node_modules:/radio/node_modules
+
 volumes:
   node_modules: {}
