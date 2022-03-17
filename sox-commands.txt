@@ -1,0 +1,33 @@
+sox \
+  --i \
+  "audio/songs/conversation.mp3"
+
+sox \
+  --i \
+  "audio/fx/Boo! Sound Effect (128 kbps).mp3"
+
+## Change the Bit rate of the file (-r flag)
+sox \
+  -v 0.99 \
+  -t mp3 \
+  "audio/fx/Boo! Sound Effect (128 kbps).mp3" \
+  -r 48000 \
+  -t mp3 \
+  "output.mp3"
+
+## Gets the Bit rate
+sox \
+  --i \
+  -B \
+  "audio/fx/Boo! Sound Effect (128 kbps).mp3"
+  
+## Concat 2 audios
+sox \
+  -t mp3 \
+  -v 0.99 \
+  -m "audio/songs/conversation.mp3" \
+  -t mp3 \
+  -v 0.99 \
+  -m "audio/fx/Boo! Sound Effect (128 kbps).mp3" \
+  -t mp3 \
+  "output.mp3"
