@@ -1,0 +1,18 @@
+version: '2.1'
+services:
+  dev:
+    image: radio
+    build: .
+    environment:
+      PORT: 5556
+    command: 
+      - yarn
+      - dev
+    volumes:
+      - .:/radio
+      - node_modules:/radio/node_modules
+    ports:
+      - 5556:5556
+
+volumes:
+  node_modules: {}
