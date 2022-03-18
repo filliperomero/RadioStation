@@ -18,7 +18,7 @@ export default class TestUtil {
   static generateWritableStream(onData) {
     return new Writable({
       write(chunk, enc, cb) {
-        onData(chunk)
+        onData?.(chunk)
         cb(null, chunk)
       }
     })
@@ -26,7 +26,7 @@ export default class TestUtil {
 
   static defaultHandleParams() {
     const requestStream = TestUtil.generateReadableStream(['body'])
-    const response = TestUtil.generateWritableStream(() => {})
+    const response = TestUtil.generateWritableStream()
 
     const data = {
       request: Object.assign(requestStream, {
