@@ -18,6 +18,11 @@ describe('API E2E Suite Test', () => {
   const possibleCommands = {
     start: 'start',
     stop: 'stop',
+    applause: 'applause',
+    audience: 'audience',
+    boo: 'boo',
+    fart: 'fart',
+    laugh: 'laugh'
   }
 
   let testServer = superTest(Server())
@@ -100,7 +105,7 @@ describe('API E2E Suite Test', () => {
     })
   })
 
-  describe('client workflow', () => {
+  describe('Client Workflow', () => {
 
     async function getTestServer() {
       const getSupertTest = port => superTest(`http://localhost:${port}`)
@@ -133,6 +138,7 @@ describe('API E2E Suite Test', () => {
         }
       }
     }
+    
     test('it should not receive data stream if the process is not playing', async () => {
       const server = await getTestServer()
       const onChunk = jest.fn()
@@ -146,6 +152,7 @@ describe('API E2E Suite Test', () => {
       server.kill()
       expect(onChunk).not.toHaveBeenCalled()
     })
+
     test('it should receive data stream if the process is playing', async () => {
       const server = await getTestServer()
       const onChunk = jest.fn()
@@ -162,6 +169,53 @@ describe('API E2E Suite Test', () => {
       
       expect(buffer).toBeInstanceOf(Buffer)
       expect(buffer.length).toBeGreaterThan(1000)
+
+      server.kill()
+    })
+
+    test('It should not break the api when sending all commands together at once', async () => {
+      const server = await getTestServer()
+      const sender = commandSender(server.testServer)
+      await sender.send(possibleCommands.start)
+
+      const onChunk = jest.fn()
+      pipeAndReadStreamData(
+        server.testServer.get(`/stream`),
+        onChunk
+      )
+      const commands = Reflect.ownKeys(possibleCommands)
+        .filter(cmd => cmd !== possibleCommands.start || cmd !== possibleCommands.stop)
+
+      for (const command of commands) {
+        await sender.send(command)
+        await setTimeout(RETENTION_DATA_PERIOD)
+      }
+
+      await sender.send(possibleCommands.stop)
+
+      const [
+        [buffer]
+      ] = onChunk.mock.calls
+
+      const atLeastCallCount = 5
+      expect(onChunk.mock.calls.length).toBeGreaterThan(atLeastCallCount)
+      expect(buffer).toBeInstanceOf(Buffer)
+      expect(buffer.length).toBeGreaterThan(1000)
+
+      server.kill()
+    })
+
+    test('It should not break sending commands to the API if there is no audio playing', async () => {
+      const server = await getTestServer()
+      const sender = commandSender(server.testServer)
+
+      await setTimeout(RETENTION_DATA_PERIOD)
+
+      await sender.send(possibleCommands.stop)
+      await sender.send(possibleCommands.applause)
+      await sender.send(possibleCommands.stop)
+
+      await setTimeout(RETENTION_DATA_PERIOD)
 
       server.kill()
     })
